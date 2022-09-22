@@ -419,6 +419,11 @@ def make_h5_from_sp(sp, data_file, snr_min=7, zap_chans=None,
             
         yc = cand_data(yc, tstart, tstop)
 
+        # Fix annoying null char issues in header
+        yc.source_name = yc.source_name.rsplit(b'\x00')[0]
+        yc.your_header.source_name =\
+                    yc.your_header.source_name.rsplit('\x00')[0]
+
         # Decimate if desired
         t_dec_fac = t_dec
         f_dec_fac = f_dec
