@@ -5,8 +5,7 @@ from argparse import ArgumentParser
 import time
 
 
-def convert_to_8bit(infile, outbase, telescope_id=None, machine_id=None, 
-                    source_name=None):
+def fix_file(args):
     """
     Fix select header values by writing new file
 
@@ -15,20 +14,20 @@ def convert_to_8bit(infile, outbase, telescope_id=None, machine_id=None,
         * machine_id 
         * source_name
     """
-    in_yr = yr.Your(infile) 
+    in_yr = yr.Your(args.infile) 
 
-    if telescope_id is not None:
-        in_yr.telescope_id = telescope_id
+    if args.telescope_id is not None:
+        in_yr.telescope_id = args.telescope_id
     
-    if machine_id is not None:
-        in_yr.machine_id = machine_id
+    if args.machine_id is not None:
+        in_yr.machine_id = args.machine_id
     
-    if source_name is not None:
-        in_yr.your_header.source_name = source_name
+    if args.source_name is not None:
+        in_yr.your_header.source_name = args.source_name
 
     hdr_in = in_yr.your_header
 
-    outfile = "%s.fil" %outbase
+    outfile = "%s.fil" %args.outbase
 
     # Setup output filterbank file
     sig_obj = make_sigproc_object(
@@ -68,7 +67,6 @@ def convert_to_8bit(infile, outbase, telescope_id=None, machine_id=None,
         # get input data
         start_ii = ii * nspec_chunk 
         indat = in_yr.get_data(nstart=start_ii, nsamp=nspec_chunk) 
-        #print("indat shape = ", indat.shape)
     
         # scale + offset
         outdat = (indat * (256/8) + 128).astype('uint8')
@@ -102,19 +100,13 @@ def parse_input():
      
     args = parser.parse_args()
 
-    infile = args.infile
-    tel    = args.telescope_id
-    m      = args.machine_id
-    src    = args.source_name
-    obase  = args.outbase
-
-    return infile, tel, m, src, obase
+    return args
 
 
 if __name__ == "__main__":
     tstart = time.time()
-    infile, tel, m, src, obase = parse_input()
-    convert_to_8bit(infile, obase, tel, m, src)
+    args = parse_input()
+    fix_file(args)
     tstop = time.time()
 
     dt = tstop - tstart

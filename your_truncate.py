@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 import time
 
 
-def truncate_fil(infile, outbase, flo, fhi, outdir='./'):
+def truncate_fil(infile, outbase, flo, fhi):
     """
     Truncate (in frequency) the input filterbank 
     infile and write to outbase.fil
@@ -50,7 +50,7 @@ def truncate_fil(infile, outbase, flo, fhi, outdir='./'):
     my_writer = my.Writer(in_yr, 
                           c_min = xx_min, 
                           c_max = xx_max, 
-                          outdir = outdir, 
+                          outdir = './', 
                           outname = outbase)
 
     my_writer.to_fil()
